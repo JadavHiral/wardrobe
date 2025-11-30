@@ -176,7 +176,7 @@ if (!file_exists(__DIR__ . "/" . $imgPath)) {
 
     <!-- ROW 1 -->
     <div class="btn-row">
-      <form action="cart.php" method="GET">
+      <form action="add_to_cart.php" method="GET">
         <input type="hidden" name="action" value="add">
         <input type="hidden" name="id" value="<?= $product['pid'] ?>">
         <button class="btn btn-cart">🛒 Add to Cart</button>
@@ -189,7 +189,7 @@ if (!file_exists(__DIR__ . "/" . $imgPath)) {
 
     <!-- ROW 2 -->
     <div class="btn-row">
-      <a class="btn btn-buy" href="cart.php?action=buy&id=<?= $product['pid'] ?>">Buy Now</a>
+      <a class="btn btn-buy" href="add_to_cart.php?action=buy&id=<?= $product['pid'] ?>">Buy Now</a>
 
       <form action="add_to_wishlist.php" method="POST">
         <input type="hidden" name="id" value="<?= $product['pid'] ?>">
@@ -211,3 +211,4 @@ if (!file_exists(__DIR__ . "/" . $imgPath)) {
 $content1 = ob_get_clean();
 include_once("layout.php");
 ?>
+
