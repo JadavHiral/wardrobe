@@ -231,3 +231,4 @@ if (!file_exists(__DIR__ . "/" . $imgPath) || empty($product["img"])) {
 $content1 = ob_get_clean();
 include_once("layout.php");
 ?>
+
