@@ -28,11 +28,14 @@ $pageTitle = $sub ? $sub['sub_cat_nm'] . " Products" : "Products";
 
 <head>
     <style>
-        body {
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            box-sizing: border-box;
             font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
             background: #fffaf8;
             color: #222;
-            line-height: 1.45;
         }
 
         header {
@@ -48,72 +51,97 @@ $pageTitle = $sub ? $sub['sub_cat_nm'] . " Products" : "Products";
             margin: 0;
         }
 
-        /* Grid layout */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 25px;
-            justify-items: center;
-            padding: 40px;
+        /* Grid container */
+        .container {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 40px auto;
+            padding: 0 10px; /* slight padding for small screens */
+            display: grid;
+            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            justify-items: center;
         }
 
         /* Product card */
-        .product {
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            padding: 20px;
             background: #fff;
-            border-radius: 12px;
-            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(214, 51, 108, 0.1);
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
             text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none;
+            color: #222;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             width: 100%;
             max-width: 270px;
         }
 
-        .product:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 40px rgba(15,23,42,0.10);
+        .product-card:hover {
+            box-shadow: 0 8px 20px rgba(214, 51, 108, 0.3);
+            transform: translateY(-5px);
         }
 
-        .product img {
-            width: 100%;       
-            height: auto;      
+        /* Product image */
+        .product-image {
+            width: 100%;
+            height: auto;
+            max-height: 200px;      /* keeps cards uniform */
+            object-fit: contain;     /* ensures full image visible */
+            background-color: #f9f9f9;
+            border-radius: 0.5rem;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
             display: block;
-            border-radius: 12px 12px 0 0;
-            background: #f5f5f5;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .product h4 {
-            margin: 10px 0;
-            font-size: 16px;
-            color: #111827;
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+            text-align: center;
         }
 
         .price {
             color: #000;
             font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .prod-actions {
-            display: flex;
-            justify-content: center;
             margin-bottom: 12px;
-            gap: 8px;
+            font-size: 1.1rem;
         }
 
-        .prod-actions a {
-            text-decoration: none;
+        .btn-view {
+            background: linear-gradient(45deg, #a50046, #d6336c);
+            border: none;
             color: #fff;
-            background: #ed86d0;
-            padding: 8px 12px;
-            border-radius: 8px;
             font-weight: 600;
+            padding: 10px 0;
+            width: 100%;
+            border-radius: 0.4rem;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .btn-view:hover,
+        .btn-view:focus {
+            background: linear-gradient(45deg, #d6336c, #a50046);
+            color: #fff;
+            text-decoration: none;
         }
 
         @media (max-width: 768px) {
-            .product {
+            .product-card {
                 max-width: 90%;
             }
         }
@@ -124,8 +152,8 @@ $pageTitle = $sub ? $sub['sub_cat_nm'] . " Products" : "Products";
     <h1><?= htmlspecialchars($pageTitle) ?></h1>
 </header>
 
-<section class="section">
-    <div class="grid">
+<section>
+    <div class="container">
         <?php
         if ($subCatId > 0) {
             $prodQuery = $conn->prepare("SELECT * FROM product WHERE sub_cat_id = ?");
@@ -140,7 +168,6 @@ $pageTitle = $sub ? $sub['sub_cat_nm'] . " Products" : "Products";
                         $prodImg = "images/default.png";
                     }
 
-                    // Determine the View link based on login status
                     if ($isLoggedIn) {
                         $viewLink = "product_detail.php?id={$prod['pid']}";
                         $viewOnClick = "";
@@ -150,13 +177,11 @@ $pageTitle = $sub ? $sub['sub_cat_nm'] . " Products" : "Products";
                     }
 
                     echo "
-                    <div class='product'>
-                        <img src='{$prodImg}' alt='" . htmlspecialchars($prod['pnm']) . "'>
-                        <h4>" . htmlspecialchars($prod['pnm']) . "</h4>
+                    <div class='product-card'>
+                        <img src='{$prodImg}' alt='" . htmlspecialchars($prod['pnm']) . "' class='product-image'>
+                        <div class='product-name'>" . htmlspecialchars($prod['pnm']) . "</div>
                         <div class='price'>₹" . number_format($prod['price'], 2) . "</div>
-                        <div class='prod-actions'>
-                            <a href='{$viewLink}' {$viewOnClick}>View</a>
-                        </div>
+                        <a href='{$viewLink}' class='btn-view' {$viewOnClick}>View</a>
                     </div>
                     ";
                 }
