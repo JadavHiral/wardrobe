@@ -157,7 +157,7 @@ header {
   <div class="total-price">Total: ₹<?= number_format($total,2) ?></div>
 
   <div class="extra-buttons">
-    <a href="products.php">Back to Products</a>
+    <a href="category.php">Back to Products</a>
     <form action="clear_cart.php" method="POST">
       <button type="submit">Clear Cart</button>
     </form>
@@ -166,7 +166,7 @@ header {
 <?php else: ?>
   <p style="text-align:center; padding: 40px;">Your cart is empty.</p>
   <div style="text-align:center; margin-top:20px;">
-    <a href="products.php" style="background:#ff9f43; color:#fff; padding:10px 20px; border-radius:8px; text-decoration:none;">Back to Products</a>
+    <a href="category.php" style="background:#ff9f43; color:#fff; padding:10px 20px; border-radius:8px; text-decoration:none;">Back to Products</a>
   </div>
 <?php endif; ?>
 </div>
