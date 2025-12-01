@@ -22,7 +22,6 @@ $product = $prodResult->fetch_assoc();
 <html>
 <head>
 <title><?= $title_page ?></title>
-
 <style>
 body {
   font-family: 'Segoe UI', sans-serif;
@@ -61,7 +60,6 @@ header {
   border-radius: 12px;
   padding: 15px;
 }
-
 .product-image img {
   width: 100%;
   height: auto;
@@ -74,28 +72,33 @@ header {
   flex: 1;
   min-width: 300px;
 }
-
 .product-info h2 {
   font-size: 28px;
   margin-bottom: 10px;
   color: #218838;
 }
-
 .price {
   font-size: 22px;
   font-weight: bold;
   color: #e63946;
   margin: 10px 0;
 }
-
 .description {
   color: #444;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   font-size: 16px;
+  line-height: 1.5;
+}
+.info-meta {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 15px;
 }
 
 label {
   font-weight: 600;
+  margin-bottom: 5px;
+  display: block;
 }
 
 input[type="number"] {
@@ -103,7 +106,7 @@ input[type="number"] {
   padding: 8px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  margin-bottom: 20px;
+  margin-bottom: 15px; /* Reduced space between quantity and buttons */
 }
 
 /* BUTTON ROWS */
@@ -140,8 +143,17 @@ input[type="number"] {
 .btn-wishlist { background: linear-gradient(90deg,#f1afd5,#f191d6); color:#111; }
 
 .btn:hover { opacity: 0.9; }
-</style>
 
+@media(max-width:768px){
+    .product-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .product-info, .product-image {
+        min-width: 100%;
+    }
+}
+</style>
 </head>
 
 <body>
@@ -151,11 +163,8 @@ input[type="number"] {
 <?php if ($product): ?>
 
 <?php
-// FIXED IMAGE PATH (STATIC /women/ folder)
 $imgPath = "images/women/" . $product["img"];
-
-// check if image exists in folder
-if (!file_exists(__DIR__ . "/" . $imgPath)) {
+if (!file_exists(__DIR__ . "/" . $imgPath) || empty($product["img"])) {
     $imgPath = "images/default.png";
 }
 ?>
@@ -171,30 +180,41 @@ if (!file_exists(__DIR__ . "/" . $imgPath)) {
 
     <div class="price">₹<?= number_format($product['price'], 2) ?></div>
 
+    <!-- PRODUCT DESCRIPTION -->
+    <?php if (!empty($product['product_description'])): ?>
+      <div class="description"><?= nl2br(htmlspecialchars($product['product_description'])) ?></div>
+    <?php endif; ?>
+
+    <!-- SUBCATEGORY INFO -->
+    <?php if(!empty($product['sub_cat_nm'])): ?>
+      <div class="info-meta"><strong>Category:</strong> <?= htmlspecialchars($product['sub_cat_nm']) ?></div>
+    <?php endif; ?>
+
+    <!-- QUANTITY -->
     <label>Quantity:</label>
     <input type="number" value="1" min="1" max="100" />
 
-    <!-- ROW 1 -->
+    <!-- BUTTON ROW 1 -->
     <div class="btn-row">
-      <form action="add_to_cart.php" method="GET">
-        <input type="hidden" name="action" value="add">
-        <input type="hidden" name="id" value="<?= $product['pid'] ?>">
-        <button class="btn btn-cart">🛒 Add to Cart</button>
-      </form>
+        <form action="add_to_cart.php" method="GET">
+          <input type="hidden" name="action" value="add">
+          <input type="hidden" name="id" value="<?= $product['pid'] ?>">
+          <button class="btn btn-cart">🛒 Add to Cart</button>
+        </form>
 
-      <a class="btn btn-back" href="products.php?sub=<?= urlencode($product['sub_cat_nm']) ?>">
-        Back to Products
-      </a>
+        <a class="btn btn-back" href="products.php?sub=<?= urlencode($product['sub_cat_nm']) ?>">
+          Back to Products
+        </a>
     </div>
 
-    <!-- ROW 2 -->
+    <!-- BUTTON ROW 2 -->
     <div class="btn-row">
-      <a class="btn btn-buy" href="add_to_cart.php?action=buy&id=<?= $product['pid'] ?>">Buy Now</a>
+        <a class="btn btn-buy" href="add_to_cart.php?action=buy&id=<?= $product['pid'] ?>">Buy Now</a>
 
-      <form action="add_to_wishlist.php" method="POST">
-        <input type="hidden" name="id" value="<?= $product['pid'] ?>">
-        <button class="btn btn-wishlist">❤️ Wishlist</button>
-      </form>
+        <form action="add_to_wishlist.php" method="POST">
+          <input type="hidden" name="id" value="<?= $product['pid'] ?>">
+          <button class="btn btn-wishlist">❤️ Wishlist</button>
+        </form>
     </div>
 
   </div>
@@ -211,4 +231,3 @@ if (!file_exists(__DIR__ . "/" . $imgPath)) {
 $content1 = ob_get_clean();
 include_once("layout.php");
 ?>
-
