@@ -1,7 +1,6 @@
 <?php
 include_once("db_connect.php");
 
-// subcategory.php
 $title_page = "Subcategory";
 ob_start();
 
@@ -21,11 +20,15 @@ $pageTitle = $category ? $category['cat_nm'] . " Collection" : "Subcategories";
 
 <head>
     <style>
-        body {
+        /* Reset extra space */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            box-sizing: border-box;
             font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
             background: #fffaf8;
             color: #222;
-            line-height: 1.45;
         }
 
         header {
@@ -41,41 +44,63 @@ $pageTitle = $category ? $category['cat_nm'] . " Collection" : "Subcategories";
             margin: 0;
         }
 
-        .cats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            justify-items: center;
-            padding: 40px;
+        /* Grid container */
+        .container {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 40px auto;
+            padding: 0; /* remove extra padding */
+            display: grid;
+            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            justify-items: center;
+            box-sizing: border-box;
         }
 
+        /* Card styling */
         .cat-card {
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            padding: 20px;
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(214, 51, 108, 0.1);
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
             text-align: center;
             text-decoration: none;
-            color: inherit;
-            border-radius: 12px;
-            overflow: hidden;
-            background: #fff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-            transition: transform 0.3s, box-shadow 0.3s;
+            color: #222;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             width: 100%;
             max-width: 270px;
+            box-sizing: border-box;
         }
 
-        .cat-card img {
+        .cat-card:hover {
+            box-shadow: 0 8px 20px rgba(214, 51, 108, 0.3);
+            transform: translateY(-5px);
+        }
+
+        /* Image styling */
+        .cat-image {
             width: 100%;
-            height: 200px;
-            object-fit: cover; /* ensures image fills the div without stretching */
-            display: block;
-            border-radius: 12px 12px 0 0;
-            background: #f5f5f5;
+            aspect-ratio: 4 / 3; /* keeps consistent ratio */
+            object-fit: contain;  /* perfect fit without cropping */
+            background-color: #f9f9f9;
+            border-radius: 0.5rem;
+            margin-bottom: 15px;
+            transition: transform 0.3s ease;
         }
 
-        .cat-card h3 {
-            margin: 10px 0;
-            font-size: 18px;
+        .cat-card:hover .cat-image {
+            transform: scale(1.05);
+        }
+
+        .cat-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #333;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
@@ -90,11 +115,12 @@ $pageTitle = $category ? $category['cat_nm'] . " Collection" : "Subcategories";
     <h1><?= htmlspecialchars($pageTitle) ?> - Choose Your Style</h1>
 </header>
 
-<section class="section">
-    <div class="cats">
+<section>
+    <div class="container">
         <?php
         if ($catId > 0) {
-            // Fetch subcategories for this category
+
+            // Fetch subcategories
             $subQuery = $conn->prepare("SELECT * FROM sub_category WHERE cat_id = ?");
             $subQuery->bind_param("i", $catId);
             $subQuery->execute();
@@ -102,26 +128,27 @@ $pageTitle = $category ? $category['cat_nm'] . " Collection" : "Subcategories";
 
             if ($subResult->num_rows > 0) {
                 while ($sub = $subResult->fetch_assoc()) {
-                    $subName = strtolower($sub['sub_cat_nm']);
-                    $subImg = "images/{$catName}/" . $sub['img']; // Use filename from DB
 
-                    // fallback if image doesn't exist
-                    if (!file_exists($subImg) || empty($sub['img'])) {
+                    $subName = strtolower($sub['sub_cat_nm']);
+                    $subImg = "images/{$catName}/" . $sub['sub_cat_img'];
+
+                    // fallback image
+                    if (!file_exists($subImg) || empty($sub['sub_cat_img'])) {
                         $subImg = "images/default.png";
                     }
 
                     echo "
                     <a class='cat-card' href='products.php?cat={$catName}&sub={$subName}'>
-                        <img src='{$subImg}' alt='{$sub['sub_cat_nm']}'>
-                        <h3>{$sub['sub_cat_nm']}</h3>
-                    </a>
-                    ";
+                        <img src='{$subImg}' class='cat-image' alt='".htmlspecialchars($sub['sub_cat_nm'])."'>
+                        <div class='cat-name'>".htmlspecialchars($sub['sub_cat_nm'])."</div>
+                    </a>";
                 }
             } else {
-                echo "<p style='text-align:center;'>No subcategories found for this category.</p>";
+                echo "<p style='text-align:center;'>No subcategories found.</p>";
             }
+
         } else {
-            echo "<p style='text-align:center;'>No category selected.</p>";
+            echo "<p style='text-align:center;'>Invalid category selected.</p>";
         }
         ?>
     </div>
