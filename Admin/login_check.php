@@ -1,20 +1,21 @@
 <?php
-include 'config.php'; // contains $con = new mysqli(...);
-
 session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $con->real_escape_string($_POST['username']);
-    $password = $con->real_escape_string($_POST['password']);
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $sql = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
-    $result = $con->query($sql);
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-    if ($result->num_rows == 1) {
-        $_SESSION['username'] = $username;
-        header("Location: home.php");
+    // ✅ STATIC ADMIN LOGIN
+    if ($username === "admin" && $password === "admin") {
+
+        $_SESSION['admin_username'] = "admin";
+        header("Location: dashboard.php");
+        exit;
     } else {
-        echo "<script>alert('Invalid username or password'); window.history.back();</script>";
+
+        $_SESSION['error'] = "Invalid username or password!";
+        header("Location: login.php");
+        exit;
     }
 }
-?>
