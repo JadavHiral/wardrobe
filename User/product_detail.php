@@ -202,7 +202,7 @@ if (!file_exists(__DIR__ . "/" . $imgPath) || empty($product["img"])) {
           <button class="btn btn-cart">🛒 Add to Cart</button>
         </form>
 
-        <a class="btn btn-back" href="products.php?sub=<?= urlencode($product['sub_cat_nm']) ?>">
+        <a class="btn btn-back" href="category.php?sub=<?= urlencode($product['sub_cat_nm']) ?>">
           Back to Products
         </a>
     </div>
@@ -211,7 +211,7 @@ if (!file_exists(__DIR__ . "/" . $imgPath) || empty($product["img"])) {
     <div class="btn-row">
         <a class="btn btn-buy" href="add_to_cart.php?action=buy&id=<?= $product['pid'] ?>">Buy Now</a>
 
-        <form action="add_to_wishlist.php" method="POST">
+        <form action="add_to_whishlist.php" method="POST">
           <input type="hidden" name="id" value="<?= $product['pid'] ?>">
           <button class="btn btn-wishlist">❤️ Wishlist</button>
         </form>
@@ -231,4 +231,3 @@ if (!file_exists(__DIR__ . "/" . $imgPath) || empty($product["img"])) {
 $content1 = ob_get_clean();
 include_once("layout.php");
 ?>
-
