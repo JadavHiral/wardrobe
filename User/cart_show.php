@@ -2,8 +2,7 @@
 include_once("db_connect.php");
 session_start();
 
-// Use session username or guest
-$username = isset($_SESSION['username']) ? $_SESSION['username'] : 'guest';
+$username = $_SESSION['username'] ?? 'guest';
 
 // Fetch cart items
 $stmt = $conn->prepare("SELECT * FROM add_to_cart WHERE username=?");
@@ -17,161 +16,145 @@ ob_start();
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<title><?= $title_page ?></title>
+    <meta charset="UTF-8">
+    <title><?= $title_page ?></title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #fffaf8;
+            margin: 0;
+            color: #222;
+        }
 
-<style>
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #fffaf8;
-  margin: 0;
-}
+        header {
+            background: linear-gradient(40deg, #111827, #1f2937);
+            color: #ffd6e0;
+            text-align: center;
+            padding: 20px;
+            font-size: 28px;
+        }
 
-header {
-  background: linear-gradient(40deg,#111827,#1f2937);
-  color: #ffd6e0;
-  text-align: center;
-  padding: 20px;
-  font-size: 26px;
-}
+        .cart-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
 
-.cart-container {
-  max-width: 1000px;
-  margin: 40px auto;
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px 0;
+            border-bottom: 1px solid #ddd;
+        }
 
-.cart-item {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 15px 0;
-  border-bottom: 1px solid #ddd;
-}
+        .cart-item img {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            object-fit: contain;
+            border: 1px solid #eee;
+        }
 
-.cart-item img {
-  width: 100px;
-  height: 100px;
-  object-fit: contain;
-  border-radius: 12px;
-}
+        .cart-item-info {
+            flex: 1;
+        }
 
-.cart-item-info {
-  flex: 1;
-}
+        .cart-item-info h3 {
+            margin: 0 0 6px 0;
+            color: #218838;
+        }
 
-.cart-item-info h3 {
-  margin: 0 0 10px 0;
-  color: #218838;
-}
+        .price {
+            color: #e63946;
+            font-size: 15px;
+            font-weight: bold;
+        }
 
-.cart-item-info .price {
-  color: #e63946;
-  font-weight: bold;
-}
+        .extra-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 10px;
+        }
 
-.cart-actions {
-  display: flex;
-  gap: 10px;
-}
+        .extra-buttons a,
+        .extra-buttons button {
+            padding: 10px 20px;
+            font-weight: 600;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
 
-.cart-actions form button,
-.cart-actions a {
-  padding: 8px 15px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-  text-decoration: none;
-  transition: 0.3s;
-}
+        .extra-buttons a {
+            background: #ff9f43;
+            color: #fff;
+            text-decoration: none;
+        }
 
-.cart-actions form button { background:#ff6b6b; color:#fff; }
-.cart-actions a { background:#111827; color:#fff; }
+        button.buy {
+            background: #28a745;
+            color: #fff;
+        }
 
-.cart-actions form button:hover,
-.cart-actions a:hover { opacity: 0.9; }
+        button.remove {
+            background: #ff4d4d;
+            color: #fff;
+        }
 
-.total-price {
-  text-align: right;
-  font-size: 22px;
-  font-weight: bold;
-  margin-top: 20px;
-}
-
-.extra-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.extra-buttons a,
-.extra-buttons form button {
-  padding: 10px 20px;
-  border-radius: 8px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: 0.3s;
-}
-
-.extra-buttons a { background: #ff9f43; color: #fff; }
-.extra-buttons form button { background: #ff6b6b; color: #fff; }
-
-.extra-buttons a:hover,
-.extra-buttons form button:hover { opacity: 0.9; }
-</style>
+        input[type=checkbox] {
+            transform: scale(1.3);
+            margin-right: 10px;
+        }
+    </style>
 </head>
+
 <body>
 
-<header>Your Cart</header>
+    <header>Your Cart</header>
+    <div class="cart-container">
 
-<div class="cart-container">
-<?php if (!empty($cartItems)): ?>
+        <?php if (!empty($cartItems)): ?>
+            <form action="cart_action.php" method="POST">
+                <?php foreach ($cartItems as $item): ?>
+                    <div class="cart-item">
+                        <input type="checkbox" name="cart_ids[]" value="<?= $item['cart_id'] ?>" checked>
+                        <img src="images/women/<?= htmlspecialchars($item['img']) ?>">
+                        <div class="cart-item-info">
+                            <h3><?= htmlspecialchars($item['pnm']) ?></h3>
+                            <div class="price">
+                                ₹<?= $item['price'] ?> x <?= $item['qty'] ?> =
+                                ₹<?= number_format($item['price'] * $item['qty'], 2) ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
 
-  <?php
-  $total = 0;
-  foreach ($cartItems as $item):
-      $subtotal = $item['price'] * $item['qty'];
-      $total += $subtotal;
-  ?>
-  <div class="cart-item">
-    <img src="images/women/<?= htmlspecialchars($item['img']) ?>" alt="<?= htmlspecialchars($item['pnm']) ?>">
-    <div class="cart-item-info">
-      <h3><?= htmlspecialchars($item['pnm']) ?></h3>
-      <div class="price">₹<?= number_format($item['price'],2) ?> x <?= $item['qty'] ?> = ₹<?= number_format($subtotal,2) ?></div>
+                <div class="extra-buttons">
+                    <a href="category.php">Back to Products</a>
+                    <button type="submit" name="action" value="buy" class="buy">Buy Selected</button>
+                    <button type="submit" name="action" value="remove" class="remove">Remove Selected</button>
+                </div>
+            </form>
+
+        <?php else: ?>
+            <p style="text-align:center; padding:40px;">Your cart is empty.</p>
+            <center>
+                <a href="category.php" style="background:#ff9f43; padding:10px 20px; border-radius:8px; color:#fff;">Shop
+                    Now</a>
+            </center>
+        <?php endif; ?>
+
     </div>
-    <div class="cart-actions">
-      <form action="remove_from_cart.php" method="POST">
-        <input type="hidden" name="cart_id" value="<?= $item['cart_id'] ?>">
-        <button type="submit">Remove</button>
-      </form>
-      <a href="checkout.php?cart_id=<?= $item['cart_id'] ?>">Buy Now</a>
-    </div>
-  </div>
-  <?php endforeach; ?>
-
-  <div class="total-price">Total: ₹<?= number_format($total,2) ?></div>
-
-  <div class="extra-buttons">
-    <a href="category.php">Back to Products</a>
-    <form action="clear_cart.php" method="POST">
-      <button type="submit">Clear Cart</button>
-    </form>
-  </div>
-
-<?php else: ?>
-  <p style="text-align:center; padding: 40px;">Your cart is empty.</p>
-  <div style="text-align:center; margin-top:20px;">
-    <a href="category.php" style="background:#ff9f43; color:#fff; padding:10px 20px; border-radius:8px; text-decoration:none;">Back to Products</a>
-  </div>
-<?php endif; ?>
-</div>
-
 </body>
+
 </html>
 
 <?php
