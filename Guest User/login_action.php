@@ -1,3 +1,4 @@
+<!-- login_action.php -->
 <?php
 session_start();
 include_once("db_connect.php");
@@ -15,7 +16,7 @@ if (!isset($_SESSION['user_id']) && isset($_COOKIE['remember_user'])) {
         $_SESSION['user_id']   = $user['id'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_name']  = $user['username'];
-        $_SESSION['user_image'] = $user['photo'];   // FIXED
+        $_SESSION['user_photo'] = $user['photo'];   // FIXED
 
         header("Location: home.php");
         exit;
@@ -38,7 +39,7 @@ if ($result && mysqli_num_rows($result) == 1) {
         $_SESSION['user_id']   = $user['id'];
         $_SESSION['user_email'] = $user['email'];
         $_SESSION['user_name']  = $user['username'];
-        $_SESSION['user_image'] = $user['photo'];   // FIXED
+        $_SESSION['user_photo'] = $user['photo'];   // FIXED
 
         if (isset($_POST['remember_me'])) {
             setcookie("remember_user", $user['id'], time() + 86400 * 3, "/");
