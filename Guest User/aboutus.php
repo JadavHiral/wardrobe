@@ -1,18 +1,18 @@
+<!-- aboutus.php -->
 <?php
 $title_page = "About Us";
 ob_start();
 ?>
 
 <style>
- 
-    body {
-            font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-            background: #fffaf8;
-            color: #222;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            line-height: 1.45;
-        }
+  body {
+    font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: #fffaf8;
+    color: #222;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.45;
+  }
 
   /* HERO */
   .about-hero {
@@ -75,7 +75,7 @@ ob_start();
   }
 
   /* MISSION */
-   .mission-grid {
+  .mission-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -84,7 +84,7 @@ ob_start();
   }
 
   .mission-card {
-    background:  #edccd7ff;
+    background: #edccd7ff;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     padding: 25px;
@@ -144,6 +144,7 @@ ob_start();
       margin-top: 20px;
       width: 100%;
     }
+
     .mission-card {
       width: 90%;
     }
@@ -187,8 +188,6 @@ ob_start();
 
   </div>
 </section>
-
-
 
 <!-- CTA -->
 <section class="about-cta">
