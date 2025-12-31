@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (mysqli_query($conn, $sql)) {
 
         // -------------------------------
-        // ✅ Add cookies (valid for 30 days)
+        // Add cookies (valid for 30 days)
         // -------------------------------
         setcookie("registered_user", $username, time() + (30 * 24 * 60 * 60), "/");
         setcookie("registered_name", $fullname, time() + (30 * 24 * 60 * 60), "/");
