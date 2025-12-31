@@ -1,8 +1,6 @@
+<!-- home.php -->
 <?php
-
 include_once("db_connect.php");
-
-// index.php
 $title_page = "Home";
 ob_start();
 ?>
@@ -121,7 +119,6 @@ ob_start();
 
         <div style="margin-top:18px; display:flex; gap:12px; align-items:center;">
             <div class="small"><i class="fa-solid fa-truck-fast" style="color:#ff6f91"></i> Fast delivery</div>
-            <!-- <div class="small"><i class="fa-solid fa-shield-halved" style="color:#ff6f91"></i> 30-day returns</div>-->
         </div>
     </div>
 
@@ -155,60 +152,6 @@ ob_start();
 
     </div>
 </section>
-
-<!-- FEATURED PRODUCTS -->
-<!--<section class="section">
-    <h2>Featured Picks</h2>
-
-    <div class="grid">
-       product 1
-        <div class="product">
-            <div class="img"><img src="https://images.unsplash.com/photo-1520975911155-6d5332a2c9f6?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=11111" alt=""></div>
-            <h4>Classic Linen Shirt</h4>
-            <div class="price">₹1,299</div>
-            <div class="prod-actions">
-                <a class="btn-alt" href="product.php?id=1">View</a>
-                <a class="btn-primary" href="product.php?id=1">Buy</a>
-            </div>
-        </div>
-
-    product 2 
-        <div class="product">
-            <div class="img"><img src="https://images.unsplash.com/photo-1530845641711-7e6f27a0b34b?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=22222" alt=""></div>
-            <h4>Everyday Tee</h4>
-            <div class="price">₹699</div>
-            <div class="prod-actions">
-                <a class="btn-alt" href="product.php?id=2">View</a>
-                <a class="btn-primary" href="product.php?id=2">Buy</a>
-            </div>
-        </div> 
-
-        product 3 
-        <div class="product">
-            <div class="img"><img src="https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=33333" alt=""></div>
-            <h4>Chic Midi Dress</h4>
-            <div class="price">₹1,899</div>
-            <div class="prod-actions">
-                <a class="btn-alt" href="product.php?id=3">View</a>
-                <a class="btn-primary" href="product.php?id=3">Buy</a>
-            </div>
-        </div>
-
-        product 4
-        <div class="product">
-            <div class="img"><img src="https://images.unsplash.com/photo-1520975531631-c5f7b0e057d4?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.0.3&s=44444" alt=""></div>
-            <h4>Tailored Blazer</h4>
-            <div class="price">₹3,499</div>
-            <div class="prod-actions">
-                <a class="btn-alt" href="product.php?id=4">View</a>
-                <a class="btn-primary" href="product.php?id=4">Buy</a>
-            </div>
-        </div>
-
-    </div>
-</section>- -->
-
-
 <?php
 $content1 = ob_get_clean();
 include_once("layout.php");
