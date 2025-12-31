@@ -7,6 +7,7 @@ ob_start();
 
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Register Validation</title>
 
@@ -17,27 +18,27 @@ ob_start();
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
 
   <style>
- 
-   body {
-            font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-            background: #fffaf8;
-            color: #222;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            line-height: 1.45;
-        }
+    body {
+      font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: #fffaf8;
+      color: #222;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.45;
+    }
 
-        header {
-            background: linear-gradient(40deg, #111827, #1f2937);
-            color: #fff;
-            padding: 10px;
-            text-align: center;
-        }
+    header {
+      background: linear-gradient(40deg, #111827, #1f2937);
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+    }
 
-        header h1 {
-            font-size: 28px;
-            color: #ffd6e0;
-        }
+    header h1 {
+      font-size: 28px;
+      color: #ffd6e0;
+    }
+
     h2 {
       text-align: center;
       margin-top: 30px;
@@ -65,7 +66,8 @@ ob_start();
       color: #333;
     }
 
-    input, select {
+    input,
+    select {
       width: 100%;
       padding: 10px;
       border-radius: 8px;
@@ -74,14 +76,16 @@ ob_start();
       transition: 0.3s;
     }
 
-    input:focus, select:focus {
+    input:focus,
+    select:focus {
       border-color: #e58db5;
       box-shadow: 0px 0px 6px #f1b8da;
       outline: none;
     }
 
     /* Error styles */
-    input.error, select.error {
+    input.error,
+    select.error {
       border: 2px solid red;
     }
 
@@ -105,16 +109,17 @@ ob_start();
       transition: 0.3s;
       box-shadow: 0 6px 18px rgba(255, 111, 145, 0.15);
     }
-   button:hover {
+
+    button:hover {
       opacity: 0.9;
       transform: translateY(-2px);
-    } 
+    }
   </style>
 </head>
 
 <body>
   <?php
-if (isset($_COOKIE['registered_msg'])) {
+  if (isset($_COOKIE['registered_msg'])) {
     echo "<div style='
         background: #d1ffd6; 
         padding: 15px; 
@@ -124,15 +129,15 @@ if (isset($_COOKIE['registered_msg'])) {
         border-radius: 8px;
         font-size: 16px;
     '>
-    <b>Hello ".$_COOKIE['registered_name']."!</b><br>
-    ".$_COOKIE['registered_msg']."
+    <b>Hello " . $_COOKIE['registered_name'] . "!</b><br>
+    " . $_COOKIE['registered_msg'] . "
     </div>";
-}
-?>
+  }
+  ?>
 
-<header>
-  <h1>Registration</h1>
-</header>
+  <header>
+    <h1>Registration</h1>
+  </header>
   <div class="form-container">
     <form id="regform" method="POST" action="register_action.php" enctype="multipart/form-data" novalidate>
 
@@ -154,7 +159,9 @@ if (isset($_COOKIE['registered_msg'])) {
 
       <div class="formgroup">
         <label for="phone">Phone</label>
-        <input type="tel" name="phone" id="phone">
+        <!-- <input type="tel" name="phone" id="phone"> -->
+        <input type="tel" name="phone" id="phone" pattern="^\+?[0-9\s\-]{10,15}$" title="Enter a valid phone number">
+
       </div>
 
       <div class="formgroup">
@@ -187,16 +194,16 @@ if (isset($_COOKIE['registered_msg'])) {
         <input type="password" name="cpassword" id="cpassword">
       </div>
 
-     <!-- <button type="submit" href="login.php">Register</button>-->
-<button type="submit">Register</button>
+      <!-- <button type="submit" href="login.php">Register</button>-->
+      <button type="submit">Register</button>
 
     </form>
 
 
-<p style="text-align:center; margin-top:15px;">
-  Already have an account? 
-  <a href="login.php" style="color:#7a0c2e; font-weight:bold;">Login</a>
-</p>
+    <p style="text-align:center; margin-top:15px;">
+      Already have an account?
+      <a href="l<ogin.php" style="color:#7a0c2e; font-weight:bold;">Login</a>
+    </p>
 
   </div>
 
@@ -211,26 +218,73 @@ if (isset($_COOKIE['registered_msg'])) {
 
       $("#regform").validate({
         rules: {
-          fullname: { required: true, minlength: 3 },
-          username: { required: true, minlength: 3, maxlength: 15 },
-          email: { required: true, email: true },
-          phone: { required: true, digits: true, minlength: 10, maxlength: 10 },
-          gender: { required: true },
-          dob: { required: true },
-          photo: { required: true, extension: "jpg|jpeg|png|gif" },
-          password: { required: true, minlength: 6 },
-          cpassword: { required: true, equalTo: "#password" }
+          fullname: {
+            required: true,
+            minlength: 3
+          },
+          username: {
+            required: true,
+            minlength: 3,
+            maxlength: 15
+          },
+          email: {
+            required: true,
+            email: true
+          },
+          // phone: { required: true, digits: true, minlength: 10, maxlength: 10 },
+          phone: {
+            required: true,
+            minlength: 10,
+            maxlength: 15,
+            pattern: /^\+?[0-9\s\-]{10,15}$/
+          },
+          gender: {
+            required: true
+          },
+          dob: {
+            required: true
+          },
+          photo: {
+            required: true,
+            extension: "jpg|jpeg|png|gif"
+          },
+          password: {
+            required: true,
+            minlength: 6
+          },
+          cpassword: {
+            required: true,
+            equalTo: "#password"
+          }
         },
         messages: {
-          fullname: { required: "Enter your full name" },
-          username: { required: "Enter a username" },
-          email: { required: "Enter your email" },
-          phone: { required: "Enter phone number" },
-          gender: { required: "Select gender" },
-          dob: { required: "Select date of birth" },
-          photo: { required: "Select your photo" },
-          password: { required: "Enter password" },
-          cpassword: { equalTo: "Passwords do not match" }
+          fullname: {
+            required: "Enter your full name"
+          },
+          username: {
+            required: "Enter a username"
+          },
+          email: {
+            required: "Enter your email"
+          },
+          phone: {
+            required: "Enter phone number"
+          },
+          gender: {
+            required: "Select gender"
+          },
+          dob: {
+            required: "Select date of birth"
+          },
+          photo: {
+            required: "Select your photo"
+          },
+          password: {
+            required: "Enter password"
+          },
+          cpassword: {
+            equalTo: "Passwords do not match"
+          }
         },
         errorPlacement: function(error, element) {
           error.insertAfter(element);
@@ -245,6 +299,7 @@ if (isset($_COOKIE['registered_msg'])) {
   </script>
 
 </body>
+
 </html>
 
 <?php
