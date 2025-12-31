@@ -1,119 +1,156 @@
 <?php
-$title_page = "Change Password";
-ob_start();
 session_start();
-include_once("db_connect.php");
+include "db_connect.php";
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
-    exit;
+    exit();
 }
-$uid = (int)$_SESSION['user_id'];
+
+$user_id = $_SESSION['user_id'];
 $success = $error = "";
 
+// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $current = $_POST['current_password'] ?? '';
-    $new = $_POST['new_password'] ?? '';
+    $new     = $_POST['new_password'] ?? '';
     $confirm = $_POST['confirm_password'] ?? '';
 
     if ($new !== $confirm) {
         $error = "New passwords do not match.";
     } elseif (strlen($new) < 6) {
-        $error = "New password should be 6+ characters.";
+        $error = "New password must be at least 6 characters.";
     } else {
-        $stmt = $conn->prepare("SELECT password FROM users WHERE id=? LIMIT 1");
-        $stmt->bind_param("i", $uid);
+        // Fetch stored hash
+        $stmt = $conn->prepare("SELECT password FROM users WHERE id=?");
+        $stmt->bind_param("i", $user_id);
         $stmt->execute();
-        $stmt->bind_result($hash);
-        if ($stmt->fetch() && password_verify($current, $hash)) {
+        $stmt->bind_result($storedHash);
+        if ($stmt->fetch()) {
             $stmt->close();
-            $newhash = password_hash($new, PASSWORD_DEFAULT);
-            $u = $conn->prepare("UPDATE users SET password=? WHERE id=?");
-            $u->bind_param("si", $newhash, $uid);
-            if ($u->execute()) {
-                $success = "Password updated.";
+            if (password_verify($current, $storedHash) || $current === $storedHash || md5($current) === $storedHash) {
+                // valid
+
+
+                // $newHash = password_hash($new, PASSWORD_DEFAULT);
+                // $update = $conn->prepare("UPDATE users SET password=? WHERE id=?");
+                // $update->bind_param("si", $newHash, $user_id);
+                // $update->execute();
+
+                // if ($update->execute()) {
+                //     header("Location: change_password.php?status=success");
+                //     exit();
+                // } else {
+                //     $error = "Error updating password.";
+                // }
+                // $update->close();
+                $newHash = password_hash($new, PASSWORD_DEFAULT);
+                $update = $conn->prepare("UPDATE users SET password=? WHERE id=?");
+                $update->bind_param("si", $newHash, $user_id);
+
+                if ($update->execute()) {
+                    $_SESSION['notifications'][] = "🔐 Your password has been changed successfully!";
+                    header("Location: change_password.php?status=success");
+                    exit();
+                } else {
+                    $error = "Error updating password.";
+                }
+                $update->close();
             } else {
-                $error = "Update failed.";
+                $error = "Current password is incorrect.";
             }
-            $u->close();
         } else {
-            $error = "Current password incorrect.";
+            $error = "User not found.";
+            $stmt->close();
         }
-        $stmt->close();
     }
 }
+
+
 ?>
-<!doctype html>
+
+<!DOCTYPE html>
 <html>
 
 <head>
-    <title> 
-<script src="js/jquery.validate.min.js"></script>
-<script src="js/jquery.validate.min.js"></script>
-
-   
-    <script src="jquery-3.7.1.js"></script>
-</title>
+    <title>Change Password</title>
     <style>
-         body {
-            font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-          background: linear-gradient(90deg, #f7ded4 50%, #e7b0c3 100%);
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(90deg, #f7ded4 50%, #e7b0c3 100%);
             color: #222;
-            line-height: 1.45;
         }
 
-
-        .box {
-            max-width: 640px;
+        .container {
+            max-width: 500px;
             margin: 80px auto;
             background: #fff;
-            padding: 28px;
+            padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06)
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
         }
 
-         label {
-      font-weight: 500;
-      margin-bottom: 5px;
-      display: block;
-      color: #333;
-    }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ff698c;
+        }
+
+        label {
+            font-weight: 500;
+            display: block;
+            margin-bottom: 5px;
+        }
 
         input {
             width: 100%;
             padding: 10px;
+            margin-bottom: 15px;
             border-radius: 8px;
-            border: 1px solid #ddd
+            border: 1px solid #ccc;
         }
 
-     .btn {
+        .btn {
             width: 100%;
-            padding: 10px 16px;
-            font-size: 16px;
+            padding: 12px;
+            background: linear-gradient(90deg, #ed86d0ff, #ff9eb0);
             border: none;
+            color: white;
+            font-size: 16px;
             border-radius: 999px;
             cursor: pointer;
-            font-weight: 700;
-            background: linear-gradient(90deg, #ed86d0ff, #ff9eb0);
-            color: white;
-            transition: 0.3s;
-            box-shadow: 0 6px 18px rgba(255, 111, 145, 0.15);
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
         }
 
         .success {
-            background: #e6ffef;
-            padding: 12px;
-            border-left: 4px solid #16a34a;
-            margin-bottom: 10px
+            background: #d4edda;
+            color: #155724;
         }
 
         .error {
-            background: #ffecec;
-            padding: 12px;
-            border-left: 4px solid #f43f5e;
-            margin-bottom: 10px
+            background: #f8d7da;
+            color: #721c24;
         }
-         header {
+
+        .back-btn {
+            margin-top: 10px;
+            background: #ccc;
+            color: #000;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            display: block;
+            text-decoration: none;
+        }
+
+        header {
             background: linear-gradient(40deg, #111827, #1f2937);
             color: #fff;
             padding: 10px;
@@ -125,68 +162,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #ffd6e0;
         }
     </style>
-    <script>
-$(document).ready(function () {
-
-    $("#changePasswordForm").validate({
-        rules: {
-            current_password: {
-                required: true,
-                minlength: 5
-            },
-            new_password: {
-                required: true,
-                minlength: 6
-            },
-            confirm_password: {
-                required: true,
-                minlength: 6,
-                equalTo: "input[name='new_password']"
-            }
-        },
-
-        messages: {
-            current_password: {
-                required: "Enter your current password",
-                minlength: "Password must be at least 5 characters"
-            },
-            new_password: {
-                required: "Enter a new password",
-                minlength: "New password must be at least 6 characters"
-            },
-            confirm_password: {
-                required: "Confirm your new password",
-                minlength: "Confirm password must be at least 6 characters",
-                equalTo: "Passwords do not match"
-            }
-        }
-    });
-
-});
-</script>
-
 </head>
 
 <body>
-    <header><h1>Change Password</h1></header>
-    <div class="box">
-        
-        <?php if ($success): ?><div class="success"><?= $success ?></div><?php endif; ?>
-        <?php if ($error): ?><div class="error"><?= $error ?></div><?php endif; ?>
+    <header>
+        <h1>Change Password</h1>
+    </header>
+    <div class="container">
+
+
+        <?php if (isset($_GET['status']) && $_GET['status'] === 'success'): ?>
+            <div class="message success">Password updated successfully!</div>
+            <script>
+                setTimeout(() => {
+                    document.querySelector('.success')?.remove();
+                }, 3000);
+            </script>
+        <?php elseif (!empty($error)): ?>
+            <div class="message error"><?= $error ?></div>
+            <script>
+                setTimeout(() => {
+                    document.querySelector('.error')?.remove();
+                }, 3000);
+            </script>
+        <?php endif; ?>
 
         <form method="POST">
-            <label>Current password</label>
+            <label>Current Password</label>
             <input type="password" name="current_password" required>
 
-            <label>New password</label>
+            <label>New Password</label>
             <input type="password" name="new_password" required>
 
-            <label>Confirm new password</label>
-            <input type="password" name="confirm_password" required> </br><br>
-       
-            <button class="btn" type="submit">Update password</button>
+            <label>Confirm New Password</label>
+            <input type="password" name="confirm_password" required>
+
+            <button class="btn" type="submit">Update Password</button>
         </form>
+        <button class="btn" onclick="window.location.href='myaccount.php'"
+            style="margin-top:10px; background:#ccc; color:#000;">
+            ← Back
+        </button>
     </div>
+
 </body>
 
 </html>
