@@ -15,8 +15,6 @@ if (isset($_SESSION['user_id'])) {
     header("Location: home.php");
     exit;
 }
-
-
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +29,7 @@ if (isset($_SESSION['user_id'])) {
     <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
 
     <style>
-         body {
+        body {
             font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
             background: #fffaf8;
             color: #222;
@@ -106,8 +104,8 @@ if (isset($_SESSION['user_id'])) {
             opacity: 0.9;
             transform: translateY(-2px);
         }
-        
-      
+
+
         label.error {
             color: red;
             font-size: 14px;
@@ -142,9 +140,9 @@ if (isset($_SESSION['user_id'])) {
 
 <body>
     <?php
-if (isset($_COOKIE['registered_msg'])) {
+    if (isset($_COOKIE['registered_msg'])) {
 
-    echo "<div style='
+        echo "<div style='
         background: #d1ffd6;
         padding: 15px;
         border-left: 5px solid #28a745;
@@ -155,14 +153,14 @@ if (isset($_COOKIE['registered_msg'])) {
         color: #034d12;
         font-family: Poppins;
     '>
-    <b>Hello ".$_COOKIE['registered_name']."!</b><br>
-    ".$_COOKIE['registered_msg']."
+    <b>Hello " . $_COOKIE['registered_name'] . "!</b><br>
+    " . $_COOKIE['registered_msg'] . "
     </div>";
 
-    // Delete message cookie so it shows only once
-    setcookie('registered_msg', '', time() - 3600, '/');
-}
-?>
+        // Delete message cookie so it shows only once
+        setcookie('registered_msg', '', time() - 3600, '/');
+    }
+    ?>
 
     <header>
         <h1>Login</h1>
@@ -172,43 +170,39 @@ if (isset($_COOKIE['registered_msg'])) {
         <form id="loginForm" method="POST" action="login_action.php">
 
 
-            Username: <br>
+            <label for="username">Username</label>
             <input type="text" name="username"><br><br>
 
-            Password: <br>
+            <label for="password">Password</label>
             <input type="password" name="password"><br><br>
 
             <button type="submit">Login</button>
 
             <p style="text-align:center; margin-top:15px;">
                 Don’t have an account? <a href="register.php" style="color:#7a0c2e; font-weight:bold;">Register</a>
-           
-        <label>
-    <input type="checkbox" name="remember_me"> Remember Me
-</label>
-<p style="text-align:center; margin-top:4px;">
-    <a href="forgot_password.php" style="color:#7a0c2e; font-weight:bold;">Forgot Password?</a>
-</p>
 
-</p>
+                <label>
+                    <input type="checkbox" name="remember_me"> Remember Me
+                </label>
+            <p style="text-align:center; margin-top:4px;">
+                <a href="forgot_password.php" style="color:#7a0c2e; font-weight:bold;">Forgot Password?</a>
+            </p>
+
+            </p>
         </form>
         <!--for error-->
         <?php
-if (isset($_GET['error'])) {
-    if ($_GET['error'] == "wrongpassword") {
-        echo "<p style='color:red; text-align:center;'>Incorrect password!</p>";
-    }
-    if ($_GET['error'] == "notfound") {
-        echo "<p style='color:red; text-align:center;'>User not found!</p>";
-    }
-}
-?>
-
-
+        if (isset($_GET['error'])) {
+            if ($_GET['error'] == "wrongpassword") {
+                echo "<p style='color:red; text-align:center;'>Incorrect password!</p>";
+            }
+            if ($_GET['error'] == "notfound") {
+                echo "<p style='color:red; text-align:center;'>User not found!</p>";
+            }
+        }
+        ?>
     </div>
-
 </body>
-
 </html>
 
 <?php
