@@ -15,7 +15,6 @@ if (session_status() === PHP_SESSION_NONE) session_start();
     <title>cloth store</title>
 
 
-
     <style>
         /* ---------- Reset & base ---------- */
         * {
@@ -246,9 +245,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
         .cat-card img {
             width: 100%;
             height: 340px;
-            /* ✅ keeps consistent height */
             object-fit: cover;
-            /* ✅ crops images evenly */
             border-bottom: 3px solid #f7f7f7;
         }
 
@@ -438,42 +435,27 @@ if (session_status() === PHP_SESSION_NONE) session_start();
             <a href="aboutus.php">About us</a>
         </nav>
 
-        <!--icons-->
-        <!--  <div class="icons">
-        <a href="#"> <i class="ri-search-line"></i></a>
-        <a href="#"> <i class="ri-user-line"></i></a>
-        <a href="#"> <i class="ri-shopping-cart-line"></i></a>
-        <div class = "bx bx-menu" id = "menu-icon"></div>
-        </div>-->
-
-        <!--icons end-->
 
         <div class="nav-right">
             <?php if (isset($_SESSION['user_email'])): ?>
                 <a class="small" href="wishlist.php"><i class="fa-regular fa-heart"></i></a>
                 <a class="small" href="cart.php"><i class="fa-solid fa-bag-shopping"></i></a>
 
+            <!--click on user profile redirect to myaccount page-->
                 <div class="user-drop">
-                    <div style="display:flex;align-items:center;gap:8px;cursor:pointer;color:#fff;">
-                        <img src="uploads/<?php echo $_SESSION['user_image']; ?>"  style="
+                    <a href="myaccount.php" style="display:flex;align-items:center;gap:8px;color:#fff;text-decoration:none;">
+                        <img src="uploads/<?php echo $_SESSION['user_photo'] ?? 'default.jpg'; ?>" class="profile-pic-top" style="
                             width:70px;
                             height:70px;
                             border-radius:40px;
                             object-fit:contain;
                             border:2px solid #fff;
                             background:#f2f2f2;
-                            
                         ">
                         <?php echo $_SESSION['user_name']; ?>
-
-                    </div>
-                    <div class="menu">
-                        <a href="myaccount.php"><i class="fa-solid fa-box me-2"></i>Profile</a>
-                        <a href="orders.php"><i class="fa-solid fa-box me-2"></i>Orders</a>
-                        <a href="logout.php"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a>
-                    </div>
+                    </a>
                 </div>
-
+            <!---->
             <?php else: ?>
                 <a class="small" href="register.php" style="color:#ffd6e0;">Register</a>
                 <a class="btn-primary" href="login.php">Sign In</a>
@@ -510,7 +492,6 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                 <h4 style="color:#fff">Info</h4>
                 <a href="contactus.php">Contact us </a><br>
                 <a href="aboutus.php">About</a><br>
-                <!--<a href="#">Pinterest</a>-->
             </div>
         </div>
 
