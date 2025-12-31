@@ -1,40 +1,63 @@
+<!-- feedback.php -->
+<?php
+$title_page = "Feedback";
+ob_start();
+session_start();
+include_once("db_connect.php");
 
+$success = $error = "";
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name    = trim($_POST['name'] ?? '');
+    $email   = trim($_POST['email'] ?? '');
+    $subject = trim($_POST['subject'] ?? '');
+    $message = trim($_POST['message'] ?? '');
+
+    if ($name === '' || $email === '' || $subject === '' || $message === '') {
+        $error = "Please fill in all fields.";
+    } else {
+        $stmt = $conn->prepare("INSERT INTO feedback (name, email, subject, message) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $name, $email, $subject, $message);
+        if ($stmt->execute()) {
+            header("Location: feedback.php?status=success");
+            exit();
+        } else {
+            $error = "Could not submit feedback.";
+        }
+        $stmt->close();
+    }
+}
+?>
 <!doctype html>
 <html>
-
 <head>
+    <title>Send Feedback</title>
     <style>
-         body {
+        body {
             font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-          background: linear-gradient(90deg, #f7ded4 50%, #e7b0c3 100%);
+            background: linear-gradient(90deg, #f7ded4 50%, #e7b0c3 100%);
             color: #222;
             line-height: 1.45;
         }
-
         .card {
             max-width: 800px;
             margin: 40px auto;
             background: #fff;
             padding: 22px;
             border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06)
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
         }
-
         textarea {
             width: 100%;
             min-height: 140px;
             padding: 12px;
             border-radius: 8px;
-            border: 1px solid #ddd
+            border: 1px solid #ddd;
         }
-
-        input,
-        textarea {
-            font-size: 14px
+        input, textarea {
+            font-size: 14px;
         }
-
-       .btn {
+        .btn {
             width: 100%;
             padding: 10px 16px;
             font-size: 16px;
@@ -47,69 +70,76 @@
             transition: 0.3s;
             box-shadow: 0 6px 18px rgba(255, 111, 145, 0.15);
         }
-
-
         .success {
             background: #e6ffef;
             padding: 10px;
             border-left: 4px solid #16a34a;
-            margin-bottom: 8px
+            margin-bottom: 8px;
         }
-
         .error {
             background: #ffecec;
             padding: 10px;
             border-left: 4px solid #f43f5e;
-            margin-bottom: 8px
+            margin-bottom: 8px;
         }
-         header {
+        header {
             background: linear-gradient(40deg, #111827, #1f2937);
             color: #fff;
             padding: 10px;
             text-align: center;
         }
-
         header h1 {
             font-size: 28px;
             color: #ffd6e0;
         }
-          label {
-      font-weight: 500;
-      margin-bottom: 5px;
-      display: block;
-      color: #333;
-    }
-
+        label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: block;
+            color: #333;
+        }
         input {
             width: 100%;
             padding: 10px;
             border-radius: 8px;
-            border: 1px solid #ddd
+            border: 1px solid #ddd;
         }
     </style>
 </head>
-
 <body>
     <header><h1>Send Feedback</h1></header>
     <div class="card">
-    
-        <?php if ($success): ?><div class="success"><?= $success ?></div><?php endif; ?>
-        <?php if ($error): ?><div class="error"><?= $error ?></div><?php endif; ?>
+        <?php if (isset($_GET['status']) && $_GET['status'] === 'success'): ?>
+            <div class="success">Thanks for your feedback!</div>
+            <script>setTimeout(() => { document.querySelector('.success')?.remove(); }, 3000);</script>
+        <?php elseif (!empty($error)): ?>
+            <div class="error"><?= $error ?></div>
+            <script>setTimeout(() => { document.querySelector('.error')?.remove(); }, 3000);</script>
+        <?php endif; ?>
 
         <form method="POST">
-             <label for="email">Email</label>
-        <input type="text" name="email" id="email" require><br><br>
-            <label>Subject</label>
-            <input type="text" name="subject" required><br><br>
+            <label for="name">Name</label>
+            <input type="text" name="name" required>
 
-            <label style="margin-top:10px">Message</label>
-            <textarea name="message" required></textarea><br><br>
+            <label for="email">Email</label>
+            <input type="email" name="email" required>
 
-            <div style="margin-top:12px"><button class="btn" type="submit">Send Feedback</button></div>
+            <label for="subject">Subject</label>
+            <input type="text" name="subject" required>
+
+            <label for="message">Message</label>
+            <textarea name="message" required></textarea>
+
+            <div style="margin-top:12px">
+                <button class="btn" type="submit">Send Feedback</button>
+            </div>
+        <button class="btn" onclick="window.location.href='myaccount.php'"
+            style="margin-top:10px; background:#ccc; color:#000;">
+            ← Back
+        </button>
         </form>
     </div>
 </body>
-
 </html>
 <?php
 $content1 = ob_get_clean();
